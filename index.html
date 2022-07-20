@@ -1,0 +1,69 @@
+<!-- execute scripts based on .. -->
+<!-- <script src="main.js"></script> -->
+
+<!DOCTYPE html>
+<!-- <script type="module" crossorigin="anonymous" referrerpolicy="no-referrer">
+    import { ethers } from "https://cdn.ethers.io/lib/ethers-5.2.esm.min.js";
+    // Your code here...
+</script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js" integrity="sha512-Veaz5IU2iRpa0BBrJlJeRgfJ7OAHWtVJZTXvgdH7s3ffsLUChllMCqC0Bb+eeRxGlrZ06iYIE/R3KsciCrgv3A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<html>
+    <head>
+        <title>Lit Dappify Concept</title>
+    </head>
+    
+    <body>
+        <h1>Make a token gated widget</h1>
+        <div id="walletconnect">
+            <button id="button-connect">Connect Wallet</button>
+        </div>
+        <p>My first paragraph.</p>
+        <script type = "text/javascript">
+            // document.getElementById('Connected Wallet').innerHTML = connectWallet();
+        </script>
+    </body>
+    <script type = "text/javascript">  
+        document.querySelector('#walletconnect').addEventListener('click', connectWallet);
+        function updateUIWithWallet(wallet) {
+            var paragraph = document.createElement("paragraph");
+            paragraph.id = wallet;
+            paragraph.innerHTML = 'Connected Wallet: ' + wallet;
+            var button = document.getElementById("button-connect");
+            // document.getElementById('walletconnect').innerHTML = content;
+            button.replaceWith(paragraph);
+            // document.replaceChildren(["button-connect"])
+            
+        }
+
+        async function connectWallet() {
+            if (!ethereum) return alert('Please install metamask');
+        
+            try {
+                console.log(ethers);
+                const provider = new ethers.providers.Web3Provider(window.ethereum)
+                // ethereum object exists in window when metamask is installed, 
+                // metamask injects an ethereum object (their api) into the window object
+                
+                const accounts = await provider.send("eth_requestAccounts", []);
+                
+                // via .requests() we are accessing the Ethereum RPC via the basic metamask api
+                // const accounts = await ethereum.request({method: 'eth_accounts'});
+                console.log(accounts);
+        
+                if (accounts.length){
+                    const connectedWallet = accounts[0];
+                    updateUIWithWallet(connectedWallet)
+                } else{
+                    console.log("No accounts found");
+                }
+
+            } catch (error) {
+                console.log(error);
+                throw new Error("No ethereum object");
+            }
+
+        }  
+    </script>
+
+    </html>
+    

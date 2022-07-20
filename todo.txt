@@ -1,0 +1,26 @@
+[ ] get authentication object
+    [x] add wallet connect button
+        [?] how do I store variables
+            [x] id
+    [ ] build mental model of auth process (incl siwe actions)
+        [ ] wallet object of ethers
+        [ ] siwe object Creates a parsed Sign-In with Ethereum Message (EIP-4361)
+        [ ] prepareMessage => retrieve an EIP-4361 formated message for signature,
+        [ ] wallet.signMessage() (ethers)
+        [ ] ethers.utils.verifyMessage
+    [ ] have a wallet object
+    [ ] retrieve an EIP-4361 formated message
+    [ ] 
+        
+[ ] simple text that gets encoded and and symmetric key stored inside the html
+
+
+
+INSIGHTS
+- window.ethereum only exists when application runs on a server, not if html file is just oppened in a browser
+- await window.ethereum.enable(); before window.ethereum.request() can be sent
+- jQuery a javascript library to manipulate the DOM
+- access packages via two ways, either import or just run the script
+    with import more precise to decide what can be included
+    but we had unsolvable CORS problem
+- <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js" integrity="sha512-Veaz5IU2iRpa0BBrJlJeRgfJ7OAHWtVJZTXvgdH7s3ffsLUChllMCqC0Bb+eeRxGlrZ06iYIE/R3KsciCrgv3A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
