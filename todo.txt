@@ -15,7 +15,8 @@
         provider = new ethers.providers.Web3Provider(window.ethereum);
         signer = provider.getSigner()
         address = signer.getAddress()
-        signature = signer.signMessage("hello")
+        messageToSign = "Hello"
+        signature = signer.signMessage("")
 
         const authSig = {
             sig: signature,

@@ -7,17 +7,21 @@
     // Your code here...
 </script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.6.9/ethers.umd.min.js" integrity="sha512-Veaz5IU2iRpa0BBrJlJeRgfJ7OAHWtVJZTXvgdH7s3ffsLUChllMCqC0Bb+eeRxGlrZ06iYIE/R3KsciCrgv3A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script onload='LitJsSdk.litJsSdkLoadedInALIT()' src="https://jscdn.litgateway.com/index.web.js"></script>
 <html>
     <head>
         <title>Lit Dappify Concept</title>
     </head>
-    
+
     <body>
         <h1>Make a token gated widget</h1>
         <div id="walletconnect">
             <button id="button-connect">Connect Wallet</button>
         </div>
         <p>My first paragraph.</p>
+        <div>
+            <button></button>
+        </div>
         <script type = "text/javascript">
             // document.getElementById('Connected Wallet').innerHTML = connectWallet();
         </script>
@@ -61,8 +65,42 @@
                 console.log(error);
                 throw new Error("No ethereum object");
             }
+        }
 
-        }  
+        async function makeEncryption(params) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner();
+            const address = signer.getAddress();
+            const messageToSign = "Hello";
+            const signature = signer.signMessage(messageToSign);
+
+            const authSig = {
+                sig: signature,
+                derivedVia: "web3.eth.personal.sign",
+                signedMessage: messageToSign,
+                address: address,
+            };
+
+            const accessControlConditionsNFT = [
+                {
+                contractAddress: '0xabdfb84dae7923dd346d5b1a0c6fbbb0e6e5df64',
+                standardContractType: 'ERC721',
+                chain,
+                method: 'balanceOf',
+                parameters: [
+                    ':userAddress'
+                    ],
+                returnValueTest: {
+                    comparator: '>',
+                    value: '0'
+                    }
+                }
+            ]
+
+            // use LitJsSDK like this
+            // LitJsSdk.encryptString()
+        }
+
     </script>
 
     </html>
