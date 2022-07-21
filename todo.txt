@@ -1,35 +1,4 @@
-[ ] get authSig object
-    [x] add wallet connect button
-        [?] how do I store variables
-            [x] id
-    [ ] build mental model of auth process (incl siwe actions)
-        [x] wallet object of ethers
-        [x] siwe object Creates a parsed Sign-In with Ethereum Message (EIP-4361) => not needed
-        [x] prepareMessage => retrieve an EIP-4361 formated message for signature => simple string is enough
-
-
-        what is a EIP-4361 message object and is it needed
-            [ ] check documentation by Lit
-            [ ] check EIP-4361 documentation
-
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        signer = provider.getSigner()
-        address = signer.getAddress()
-        messageToSign = "Hello"
-        signature = signer.signMessage("")
-
-        const authSig = {
-            sig: signature,
-            derivedVia: "web3.eth.personal.sign",
-            signedMessage: messageToSign,
-            address: address,
-        };
-
-    [ ] have a wallet object
-    [ ] retrieve an EIP-4361 formated message
-    [ ] 
-        
-[ ] simple text that gets encoded and and symmetric key stored inside the html
+[ ] solve error of authSig object (question asked inside lit discord)
 
 
 
