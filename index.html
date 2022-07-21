@@ -17,7 +17,10 @@
         </div>
         <p>My first paragraph.</p>
         <div>
-            <button id="button-lock">Lock</button>
+            <span>
+                <button id="button-lock">Lock</button>
+                <button id="button-lock">Unlock</button>
+            </span>
         </div>
         <div id="placeholder-locked-content">
             <!-- filled with imperative functions -->
@@ -42,6 +45,22 @@
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         var chainIdToName = {'1': 'Ethereum'}
+
+        const accessControlConditionsNFT = [
+                {
+                contractAddress: '0xabdfb84dae7923dd346d5b1a0c6fbbb0e6e5df64',
+                standardContractType: 'ERC721',
+                chain,
+                method: 'balanceOf',
+                parameters: [
+                    ':userAddress'
+                    ],
+                returnValueTest: {
+                    comparator: '>',
+                    value: '0'
+                        }
+                    }
+            ]
 
         // Lit
         const client = new LitJsSdk.LitNodeClient();
@@ -104,11 +123,11 @@
             }
         }
 
-        async function makeEncryption(params) {
+        async function encrypt(params) {
             const address = await signer.getAddress();
             const chainId = await signer.getChainId();
             const chain = chainIdToName[chainId];
-            const messageToSign = "Hello";
+            const messageToSign = "Encrypt";
             const signature = await signer.signMessage(messageToSign);
 
             const authSig = {
@@ -118,22 +137,6 @@
                 address: address,
             };
 
-            const accessControlConditionsNFT = [
-                {
-                contractAddress: '0xabdfb84dae7923dd346d5b1a0c6fbbb0e6e5df64',
-                standardContractType: 'ERC721',
-                chain,
-                method: 'balanceOf',
-                parameters: [
-                    ':userAddress'
-                    ],
-                returnValueTest: {
-                    comparator: '>',
-                    value: '0'
-                        }
-                    }
-            ]
-
             var privateContent = document.getElementById("private-content").innerHTML;
 
             const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(privateContent)
@@ -141,11 +144,11 @@
             await connectWithLitClient();
 
             var encryptedSymmetricKey = await client.saveEncryptionKey({
-            accessControlConditions: accessControlConditionsNFT,
-            symmetricKey,
-            authSig,
-            chain,
-            })
+                accessControlConditions: accessControlConditionsNFT,
+                symmetricKey,
+                authSig,
+                chain,
+            });
 
             encryptedSymmetricKey = LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
 
@@ -157,10 +160,42 @@
             document.getElementById('placeholder-locked-content').appendChild(componentForPublic);
             document.querySelector('.public-content').setAttribute('id', encryptedSymmetricKey)
         }
+
+        async function decrypt() {
+            const address = await signer.getAddress();
+            const chainId = await signer.getChainId();
+            const chain = chainIdToName[chainId];
+            const messageToSign = "Decrypt";
+            const signature = await signer.signMessage(messageToSign);
+
+            const authSig = {
+                sig: signature,
+                derivedVia: "web3.eth.personal.sign",
+                signedMessage: messageToSign,
+                address: address,
+            };
+
+            await connectWithLitClient();
+
+            // get encryptedSymmetric key from HTML
+
+
+            const symmetricKey = await client.getEncryptionKey({
+                accessControlConditions: accessControlConditionsNFT,
+                toDecrypt: encryptedSymmetricKey,
+                chain,
+                authSig
+            });
+            const decryptedFile = await LitJsSdk.decryptString(
+                encryptedStr,
+                symmetricKey
+            );
+        }
+
     </script>
     <script type = "text/javascript">
         document.querySelector('#button-connect').addEventListener('click', connectWallet);
-        document.querySelector('#button-lock').addEventListener('click', makeEncryption);
+        document.querySelector('#button-lock').addEventListener('click', encrypt);
     </script>
 
     </html>

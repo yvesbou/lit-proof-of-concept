@@ -1,5 +1,11 @@
-[ ] solve error of authSig object (question asked inside lit discord)
-
+[x] solve error of authSig object (question asked inside lit discord)
+[x] content to be locked disappeared
+[x] there needs to be an unlock button
+[ ] write decrypt function
+    [ ] get encrypted symmetric key
+[ ] pressing unlock button triggers decrypt
+    [ ] showing the content
+    [ ] showing a message that this content cannot be watched
 
 
 INSIGHTS
