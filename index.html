@@ -31,8 +31,13 @@
             // document.getElementById('Connected Wallet').innerHTML = connectWallet();
         </script>
     </body>
-    <script type = "text/javascript">  
+    <script type = "text/javascript">
+        if (!window.ethereum) alert('Please install metamask');
         document.querySelector('#walletconnect').addEventListener('click', connectWallet);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        console.log(provider)
+
         function updateUIWithWallet(wallet) {
             var paragraph = document.createElement("paragraph");
             paragraph.id = wallet;
@@ -45,11 +50,10 @@
         }
 
         async function connectWallet() {
-            if (!ethereum) return alert('Please install metamask');
         
             try {
                 console.log(ethers);
-                const provider = new ethers.providers.Web3Provider(window.ethereum)
+                
                 // ethereum object exists in window when metamask is installed, 
                 // metamask injects an ethereum object (their api) into the window object
                 
@@ -73,8 +77,6 @@
         }
 
         async function makeEncryption(params) {
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            const signer = provider.getSigner();
             const address = signer.getAddress();
             const messageToSign = "Hello";
             const signature = signer.signMessage(messageToSign);
@@ -98,10 +100,10 @@
                 returnValueTest: {
                     comparator: '>',
                     value: '0'
+                        }
                     }
-                }
-            ]
-
+                ]
+                
             // use LitJsSDK like this
             // LitJsSdk.encryptString()
         }
