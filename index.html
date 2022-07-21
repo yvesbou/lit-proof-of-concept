@@ -109,7 +109,7 @@
             const chainId = await signer.getChainId();
             const chain = chainIdToName[chainId];
             const messageToSign = "Hello";
-            const signature = signer.signMessage(messageToSign);
+            const signature = await signer.signMessage(messageToSign);
 
             const authSig = {
                 sig: signature,
