@@ -1,6 +1,3 @@
-<!-- execute scripts based on .. -->
-<!-- <script src="main.js"></script> -->
-
 <!DOCTYPE html>
 <!-- <script type="module" crossorigin="anonymous" referrerpolicy="no-referrer">
     import { ethers } from "https://cdn.ethers.io/lib/ethers-5.2.esm.min.js";
@@ -20,24 +17,54 @@
         </div>
         <p>My first paragraph.</p>
         <div>
-            <button>Lock</button>
+            <button id="button-lock">Lock</button>
         </div>
-        <div class="private-content-div" style="border:1px solid black;">
-            <div>
-                <p id="private-content">This Text is going to be hidden and locked with on-chain condition.</p>
-            </div>
+        <div id="placeholder-locked-content">
+            <!-- filled with imperative functions -->
         </div>
-        <script type = "text/javascript">
-            // document.getElementById('Connected Wallet').innerHTML = connectWallet();
-        </script>
     </body>
     <script type = "text/javascript">
+        // utility functions
+        /**
+         * @param {String} HTML representing a single element
+         * @return {Element}
+         */
+        function htmlToElement(html) {
+            var template = document.createElement('template');
+            html = html.trim(); // Never return a text node of whitespace as the result
+            template.innerHTML = html;
+            return template.content.firstChild;
+        }
+    </script>
+    <script type = "text/javascript">
+        // --- globals ---
         if (!window.ethereum) alert('Please install metamask');
-        document.querySelector('#walletconnect').addEventListener('click', connectWallet);
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-
         var chainIdToName = {'1': 'Ethereum'}
+
+        // Lit
+        const client = new LitJsSdk.LitNodeClient();
+
+        // locked component
+        var htmlLockedComponent = `<div class="locked-content-box" style="border:1px solid black;">
+                    <div class="private-content-div">
+                                <p id="private-content">This Text is going to be hidden and locked with on-chain condition.</p>
+                            </div>
+                    </div>`;
+        
+        var htmlPublicComponent = `<div class='public-content'> Your Wallet is not allowed to see this content. </div>`
+        
+        var componentToLock = htmlToElement(htmlLockedComponent);
+        var componentForPublic = htmlToElement(htmlPublicComponent);
+        
+        document.getElementById('placeholder-locked-content').appendChild(componentToLock);
+
+        // --- functions ---
+
+        async function connectWithLitClient() {
+            await client.connect();
+        }
 
         function updateUIWithWallet(wallet) {
             var paragraph = document.createElement("paragraph");
@@ -111,20 +138,35 @@
 
             const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(privateContent)
 
-            const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
+            await connectWithLitClient();
+
+            const encryptedSymmetricKey = await client.saveEncryptionKey({
             accessControlConditions: accessControlConditionsNFT,
             symmetricKey,
             authSig,
             chain,
             })
 
+            encryptedSymmetricKey = LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
+
+            // get DOM element
+            var privateContentBox = document.querySelector('.locked-content-box');
+            // remove DOM element
+            privateContentBox.removeChild();
+            // add public component            
+            document.getElementById('placeholder-locked-content').appendChild(componentForPublic);
+            document.querySelector('.public-content').setAttribute('id', encryptedSymmetricKey)
             // instead, store it in html
             // make div with class="private-content-div" invisible
             // display encryptedString instead
             // assign encryptedSymmetricKey = LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
+            // call this function with a button
 
         }
-
+    </script>
+    <script type = "text/javascript">
+        document.querySelector('#button-connect').addEventListener('click', connectWallet);
+        document.querySelector('#button-lock').addEventListener('click', makeEncryption);
     </script>
 
     </html>
