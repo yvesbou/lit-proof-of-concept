@@ -22,9 +22,9 @@
         <div>
             <button>Lock</button>
         </div>
-        <div style="border:1px solid black;">
-            <div class="private-content">
-                <p>This Text is going to be hidden and locked with on-chain condition.</p>
+        <div class="private-content-div" style="border:1px solid black;">
+            <div>
+                <p id="private-content">This Text is going to be hidden and locked with on-chain condition.</p>
             </div>
         </div>
         <script type = "text/javascript">
@@ -36,7 +36,8 @@
         document.querySelector('#walletconnect').addEventListener('click', connectWallet);
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        console.log(provider)
+
+        var chainIdToName = {'1': 'Ethereum'}
 
         function updateUIWithWallet(wallet) {
             var paragraph = document.createElement("paragraph");
@@ -78,6 +79,8 @@
 
         async function makeEncryption(params) {
             const address = signer.getAddress();
+            const chainId = signer.getChainId();
+            const chain = chainIdToName[chainId];
             const messageToSign = "Hello";
             const signature = signer.signMessage(messageToSign);
 
@@ -102,10 +105,24 @@
                     value: '0'
                         }
                     }
-                ]
-                
-            // use LitJsSDK like this
-            // LitJsSdk.encryptString()
+            ]
+
+            var privateContent = document.getElementById("private-content").innerHTML;
+
+            const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(privateContent)
+
+            const encryptedSymmetricKey = await this.litNodeClient.saveEncryptionKey({
+            accessControlConditions: accessControlConditionsNFT,
+            symmetricKey,
+            authSig,
+            chain,
+            })
+
+            // instead, store it in html
+            // make div with class="private-content-div" invisible
+            // display encryptedString instead
+            // assign encryptedSymmetricKey = LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
+
         }
 
     </script>
