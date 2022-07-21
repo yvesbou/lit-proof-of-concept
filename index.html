@@ -105,7 +105,7 @@
         }
 
         async function makeEncryption(params) {
-            const address = signer.getAddress();
+            const address = await signer.getAddress();
             const chainId = await signer.getChainId();
             const chain = chainIdToName[chainId];
             const messageToSign = "Hello";
@@ -140,7 +140,7 @@
 
             await connectWithLitClient();
 
-            const encryptedSymmetricKey = await client.saveEncryptionKey({
+            var encryptedSymmetricKey = await client.saveEncryptionKey({
             accessControlConditions: accessControlConditionsNFT,
             symmetricKey,
             authSig,
@@ -152,7 +152,7 @@
             // get DOM element
             var privateContentBox = document.querySelector('.locked-content-box');
             // remove DOM element
-            privateContentBox.removeChild();
+            privateContentBox.remove();
             // add public component            
             document.getElementById('placeholder-locked-content').appendChild(componentForPublic);
             document.querySelector('.public-content').setAttribute('id', encryptedSymmetricKey)
