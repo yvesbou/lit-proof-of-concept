@@ -6,9 +6,12 @@
     [x] remove introduced bug 
 [ ] pressing unlock button triggers decrypt
     [ ] solve decrypt error
+        [ ] is the format of encryptedSymmetric form the problem 
+            I did LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
     [ ] making conditional showing
         [ ] showing the content
         [ ] showing a message that this content cannot be watched
+[ ] encrypt the whole html object
 
 
 INSIGHTS

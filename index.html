@@ -128,7 +128,7 @@
         async function encrypt(params) {
             const address = await signer.getAddress();
             const chain = await getChain();
-            const messageToSign = "Encrypt";
+            const messageToSign = "Confirm Communication with Litprotocol";
             const signature = await signer.signMessage(messageToSign);
 
             const accessControlConditions = getAccessControlConditions(chain);
@@ -169,7 +169,7 @@
         async function decrypt() {
             const address = await signer.getAddress();
             const chain = await getChain();
-            const messageToSign = "Decrypt";
+            const messageToSign = "Confirm Communication with Litprotocol";
             const signature = await signer.signMessage(messageToSign);
 
             const accessControlConditions = getAccessControlConditions(chain);
@@ -187,12 +187,17 @@
             const encryptedSymmetricKey = document.querySelector('.public-content').getAttribute('id');
             const encryptedStr = document.querySelector('#encrypted-string').innerHTML;
 
+            console.log(encryptedSymmetricKey);
+            console.log(encryptedStr);
+
+            // There was an error getting the signing shares from the nodes (UnknownError) errorCode: 'unknown_error'
             const symmetricKey = await client.getEncryptionKey({
                 accessControlConditions: accessControlConditions,
                 toDecrypt: encryptedSymmetricKey,
                 chain,
                 authSig
             });
+            console.log("************************************************************************************************************************************************************")
             const decryptedFile = await LitJsSdk.decryptString(
                 encryptedStr,
                 symmetricKey
