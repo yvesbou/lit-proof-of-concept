@@ -19,7 +19,7 @@
         <div>
             <span>
                 <button id="button-lock">Lock</button>
-                <button id="button-lock">Unlock</button>
+                <button id="button-unlock">Unlock</button>
             </span>
         </div>
         <div id="placeholder-locked-content">
@@ -38,29 +38,19 @@
             template.innerHTML = html;
             return template.content.firstChild;
         }
+
+        async function connectWithLitClient() {
+            await client.connect();
+        }
+
+
     </script>
     <script type = "text/javascript">
         // --- globals ---
         if (!window.ethereum) alert('Please install metamask');
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        var chainIdToName = {'1': 'Ethereum'}
-
-        const accessControlConditionsNFT = [
-                {
-                contractAddress: '0xabdfb84dae7923dd346d5b1a0c6fbbb0e6e5df64',
-                standardContractType: 'ERC721',
-                chain,
-                method: 'balanceOf',
-                parameters: [
-                    ':userAddress'
-                    ],
-                returnValueTest: {
-                    comparator: '>',
-                    value: '0'
-                        }
-                    }
-            ]
+        var chainIdToName = {'1': 'Ethereum'};
 
         // Lit
         const client = new LitJsSdk.LitNodeClient();
@@ -72,17 +62,21 @@
                             </div>
                     </div>`;
         
-        var htmlPublicComponent = `<div class='public-content'> Your Wallet is not allowed to see this content. </div>`
+        var htmlPublicComponent = `<div class='public-content'> Your Wallet is not allowed to see this content. </div>`;
+        var htmlParagraphEncryptedString = `<div><p id='encrypted-string'></p></div>`;
         
         var componentToLock = htmlToElement(htmlLockedComponent);
         var componentForPublic = htmlToElement(htmlPublicComponent);
+        var componentForEncryptedString = htmlToElement(htmlParagraphEncryptedString);
         
         document.getElementById('placeholder-locked-content').appendChild(componentToLock);
 
         // --- functions ---
 
-        async function connectWithLitClient() {
-            await client.connect();
+        async function getChain() {
+            const chainId = await signer.getChainId();
+            const chain = chainIdToName[chainId];
+            return chain;
         }
 
         function updateUIWithWallet(wallet) {
@@ -90,25 +84,33 @@
             paragraph.id = wallet;
             paragraph.innerHTML = 'Connected Wallet: ' + wallet;
             var button = document.getElementById("button-connect");
-            // document.getElementById('walletconnect').innerHTML = content;
-            button.replaceWith(paragraph);
-            // document.replaceChildren(["button-connect"])
-            
+            button.replaceWith(paragraph);   
+        }
+
+        function getAccessControlConditions(chain) {
+            const accessControlConditionsNFT = [
+                    {
+                    contractAddress: '0xabdfb84dae7923dd346d5b1a0c6fbbb0e6e5df64',
+                    standardContractType: 'ERC721',
+                    chain,
+                    method: 'balanceOf',
+                    parameters: [
+                        ':userAddress'
+                        ],
+                    returnValueTest: {
+                        comparator: '>',
+                        value: '0'
+                            }
+                        }
+                ]
+            return accessControlConditionsNFT;
         }
 
         async function connectWallet() {
-        
+
             try {
-                console.log(ethers);
-                
-                // ethereum object exists in window when metamask is installed, 
-                // metamask injects an ethereum object (their api) into the window object
                 
                 const accounts = await provider.send("eth_requestAccounts", []);
-                
-                // via .requests() we are accessing the Ethereum RPC via the basic metamask api
-                // const accounts = await ethereum.request({method: 'eth_accounts'});
-                console.log(accounts);
         
                 if (accounts.length){
                     const connectedWallet = accounts[0];
@@ -125,10 +127,11 @@
 
         async function encrypt(params) {
             const address = await signer.getAddress();
-            const chainId = await signer.getChainId();
-            const chain = chainIdToName[chainId];
+            const chain = await getChain();
             const messageToSign = "Encrypt";
             const signature = await signer.signMessage(messageToSign);
+
+            const accessControlConditions = getAccessControlConditions(chain);
 
             const authSig = {
                 sig: signature,
@@ -144,7 +147,7 @@
             await connectWithLitClient();
 
             var encryptedSymmetricKey = await client.saveEncryptionKey({
-                accessControlConditions: accessControlConditionsNFT,
+                accessControlConditions: accessControlConditions,
                 symmetricKey,
                 authSig,
                 chain,
@@ -159,14 +162,17 @@
             // add public component            
             document.getElementById('placeholder-locked-content').appendChild(componentForPublic);
             document.querySelector('.public-content').setAttribute('id', encryptedSymmetricKey)
+            document.querySelector('.public-content').appendChild(componentForEncryptedString)
+            document.querySelector('#encrypted-string').innerHTML = encryptedString;
         }
 
         async function decrypt() {
             const address = await signer.getAddress();
-            const chainId = await signer.getChainId();
-            const chain = chainIdToName[chainId];
+            const chain = await getChain();
             const messageToSign = "Decrypt";
             const signature = await signer.signMessage(messageToSign);
+
+            const accessControlConditions = getAccessControlConditions(chain);
 
             const authSig = {
                 sig: signature,
@@ -178,10 +184,11 @@
             await connectWithLitClient();
 
             // get encryptedSymmetric key from HTML
-
+            const encryptedSymmetricKey = document.querySelector('.public-content').getAttribute('id');
+            const encryptedStr = document.querySelector('#encrypted-string').innerHTML;
 
             const symmetricKey = await client.getEncryptionKey({
-                accessControlConditions: accessControlConditionsNFT,
+                accessControlConditions: accessControlConditions,
                 toDecrypt: encryptedSymmetricKey,
                 chain,
                 authSig
@@ -196,6 +203,7 @@
     <script type = "text/javascript">
         document.querySelector('#button-connect').addEventListener('click', connectWallet);
         document.querySelector('#button-lock').addEventListener('click', encrypt);
+        document.querySelector('#button-unlock').addEventListener('click', decrypt);
     </script>
 
     </html>
