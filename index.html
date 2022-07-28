@@ -62,7 +62,7 @@
                             </div>
                     </div>`;
         
-        var htmlPublicComponent = `<div class='public-content'> Your Wallet is not allowed to see this content. </div>`;
+        var htmlPublicComponent = `<div class='public-content'> Content is currently locked via lit protocol, press unlock to see if you are allowed to see it. </div>`;
         var htmlParagraphEncryptedString = `<div><p id='encrypted-string'></p></div>`;
         
         var componentToLock = htmlToElement(htmlLockedComponent);
@@ -161,8 +161,10 @@
             privateContentBox.remove();
             // add public component            
             document.getElementById('placeholder-locked-content').appendChild(componentForPublic);
-            document.querySelector('.public-content').setAttribute('id', encryptedSymmetricKey)
-            document.querySelector('.public-content').appendChild(componentForEncryptedString)
+            document.querySelector('.public-content').setAttribute('id', encryptedSymmetricKey);
+            document.querySelector('.public-content').appendChild(componentForEncryptedString);
+            document.querySelector('#encrypted-string').style.visibility = "hidden";
+            document.querySelector('#encrypted-string').setAttribute('class', encryptedString);
             document.querySelector('#encrypted-string').innerHTML = encryptedString;
         }
 
