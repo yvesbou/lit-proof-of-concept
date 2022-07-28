@@ -5,9 +5,7 @@
     [x] get encrypted symmetric key
     [x] remove introduced bug 
 [ ] pressing unlock button triggers decrypt
-    [ ] solve decrypt error
-        [ ] is the format of encryptedSymmetric form the problem 
-            I did LitJsSdk.uint8arrayToString(encryptedSymmetricKey, "base16")
+    [x] solve decrypt error
     [ ] making conditional showing
         [ ] showing the content
         [ ] showing a message that this content cannot be watched

@@ -192,18 +192,24 @@
             console.log(encryptedSymmetricKey);
             console.log(encryptedStr);
 
-            // There was an error getting the signing shares from the nodes (UnknownError) errorCode: 'unknown_error'
-            const symmetricKey = await client.getEncryptionKey({
-                accessControlConditions: accessControlConditions,
-                toDecrypt: encryptedSymmetricKey,
-                chain,
-                authSig
-            });
-            console.log("************************************************************************************************************************************************************")
-            const decryptedFile = await LitJsSdk.decryptString(
-                encryptedStr,
-                symmetricKey
-            );
+            try {
+                const symmetricKey = await client.getEncryptionKey({
+                    accessControlConditions: accessControlConditions,
+                    toDecrypt: encryptedSymmetricKey,
+                    chain,
+                    authSig
+                });
+
+                const decryptedFile = await LitJsSdk.decryptString(
+                    encryptedStr,
+                    symmetricKey
+                );
+
+                // TODO: UI update show same content as before encryption
+
+            } catch (error) {
+                // TODO: UI update show
+            }
         }
 
     </script>
