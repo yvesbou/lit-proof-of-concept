@@ -50,7 +50,7 @@
         if (!window.ethereum) alert('Please install metamask');
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        var chainIdToName = {'1': 'Ethereum'};
+        var chainIdToName = {'1': 'ethereum'};
 
         // Lit
         const client = new LitJsSdk.LitNodeClient();
